@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 213 31% 91%;
+    --card: 222 40% 9%;
+    --card-foreground: 213 31% 91%;
+    --popover: 222 40% 9%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 32% 15%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 222 32% 15%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 222 32% 18%;
+    --accent-foreground: 213 31% 91%;
+    --destructive: 350 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 32% 16%;
+    --input: 222 32% 16%;
+    --ring: 160 84% 39%;
+    --radius: 0.5rem;
+    --font-display: 'Syne', system-ui;
+    --font-geist-sans: 'IBM Plex Sans', system-ui;
+    --font-geist-mono: 'DM Mono', monospace;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+/* ── Ticker Tape ─────────────────────────────── */
+.ticker-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-content {
+  display: inline-flex;
+  animation: ticker 50s linear infinite;
+}
+.ticker-content:hover { animation-play-state: paused; }
+
+/* ── Chart Styles ────────────────────────────── */
+.recharts-tooltip-wrapper { outline: none !important; }
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: hsl(222 32% 16%) !important;
+}
+
+/* ── Scrollbar ───────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: hsl(222 32% 22%);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: hsl(222 32% 30%); }
+
+/* ── Glassmorphism ───────────────────────────── */
+.glass {
+  background: rgba(15, 22, 41, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Signal Badge ────────────────────────────── */
+.signal-long {
+  @apply bg-bull/10 text-bull border border-bull/30;
+}
+.signal-short {
+  @apply bg-bear/10 text-bear border border-bear/30;
+}
+
+/* ── Sentiment Meter ─────────────────────────── */
+.sentiment-bar {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff4560 0%, #666 50%, #00d07a 100%);
+}
+.sentiment-needle {
+  position: absolute;
+  top: -4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px rgba(255,255,255,0.5);
+  transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Shimmer Loading ─────────────────────────── */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(222 32% 12%) 25%,
+    hsl(222 32% 18%) 50%,
+    hsl(222 32% 12%) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Number Flash ────────────────────────────── */
+@keyframes flash-green {
+  0%   { background: rgba(0, 208, 122, 0.3); }
+  100% { background: transparent; }
+}
+@keyframes flash-red {
+  0%   { background: rgba(255, 69, 96, 0.3); }
+  100% { background: transparent; }
+}
+.flash-green { animation: flash-green 0.6s ease-out; }
+.flash-red   { animation: flash-red 0.6s ease-out; }
+
+/* ── Confidence Ring ─────────────────────────── */
+.confidence-ring {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}

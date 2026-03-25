@@ -1,0 +1,152 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String?
+  image         String?
+  emailVerified DateTime?
+  plan          Plan      @default(FREE)
+  stripeCustomerId     String? @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId        String?
+  stripeCurrentPeriodEnd DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  watchlist     WatchlistItem[]
+  alerts        Alert[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model WatchlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  ticker    String
+  addedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ticker])
+}
+
+model Signal {
+  id         String      @id @default(cuid())
+  ticker     String
+  type       SignalType
+  entry      Float
+  stopLoss   Float
+  riskReward Float
+  target1    Float
+  target2    Float
+  confidence Float
+  status     SignalStatus @default(ACTIVE)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([ticker, createdAt])
+}
+
+model SentimentSnapshot {
+  id         String   @id @default(cuid())
+  ticker     String
+  score      Float
+  bias       Bias
+  keyRisk    String
+  catalyst   String
+  confidence Float
+  createdAt  DateTime @default(now())
+
+  @@index([ticker, createdAt])
+}
+
+model Alert {
+  id        String      @id @default(cuid())
+  userId    String
+  ticker    String
+  condition AlertCondition
+  value     Float
+  triggered Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Plan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum SignalType {
+  LONG
+  SHORT
+}
+
+enum SignalStatus {
+  ACTIVE
+  HIT_TARGET1
+  HIT_TARGET2
+  STOPPED_OUT
+  EXPIRED
+}
+
+enum Bias {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+enum AlertCondition {
+  PRICE_ABOVE
+  PRICE_BELOW
+  CONFIDENCE_ABOVE
+  SENTIMENT_BULLISH
+  SENTIMENT_BEARISH
+}
