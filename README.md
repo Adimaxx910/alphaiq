@@ -247,7 +247,7 @@ Target 2  = Entry + (4 × Risk)
 
 ---
 
-## ⚠️ Disclaimer
+## ⚠️ Disclaimer / for my learfning I have built this 
 
 AlphaIQ is for informational and educational purposes only. It does not constitute financial advice. Past performance does not guarantee future results. Always do your own research.
 
